@@ -106,15 +106,32 @@
 	SELECT stafname, stalname, nurposition from staff
 	inner join nurse ON staff.staid = nurse.nurid
 
+	SELECT stafname, stalname, nurposition 
+	from staff cross join nurse 
+	where staff.staid = nurse.nurid
+
+	SELECT stafname, stalname, nurposition 
+	from staff, nurse 
+	where staff.staid = nurse.nurid
+
 	--list all the ward numbers that have staff members from VIctoria state, eliminate duplicate values and sort ascending
 	select distinct wardno
-	FROM staff
+	FROM staff 
 		inner join nurse ON staff.staid = nurse.nurid
 		inner join nurseward ON nurse.nurid = nurseward.nurid
 	where stastate = 'VIC'
 	order by 1
 
-	
+	--LIST the ward numbers and the ward name that "CHRISTOPHER HANTON" has worked in
+	SELECT w.wardno, wardname
+	from staff s
+		inner join nurse n on s.staId = n.nurid
+		inner join nurseward nw on n.nurid = nw.nurid
+		inner join ward w on w.wardno = nw.wardno
+	where StafName = 'Christopher'
+	and StaLname = "Hanton";
+
+
 }
 
 ----Sub Query: WEEK 9---
