@@ -1,3 +1,58 @@
+----USEFUL FUNCTIONS
+{
+	SELECT AVG(mark) FROM student;
+
+	SELECT Round(AVG(mark), 2) FROM student;
+
+	SELECT FLOOR(AVG(mark)) FROM student;
+
+	SELECT CEILING(AVG(mark)) FROM student;
+
+	--Using LIKE operator how we use the IN operator
+	select productid, productdescription
+		from product_t
+		where productdescription like'%Table%'
+			OR 
+			productdescription like'%Desk%';
+
+
+
+		select productid, productdescription
+		from product_t
+		where productdescription like any (ARRAY['%Table%', '%Desk%']);
+
+
+
+		select productid, productdescription
+		from product_t
+		where productdescription like any ('{"%Table%", "%Desk%"}');
+
+	--SQL WILDCARDS
+
+	--USING THE % WILDCARD
+	SELECT * FROM student WHERE sname LIKE ‘w%’
+	--Returns students whose first names start with w
+	SELECT * FROM student WHERE sname LIKE ‘%w%’
+	--returns students whose first name contains 'w'
+
+	--USING THE _ WILDCARD
+	SELECT * FROM student WHERE sname LIKE '_con'
+	--will return student's first name that starts with any character, followed by "con"
+
+	--USING THE [charlist] WILDCARD
+	SELECT * FROM student WHERE sname LIKE '[akw]%'
+	--selects students with name that starts with a,k or w
+
+	--USING THE [^charlist] WILDCARD
+	SELECT * FROM student WHERE sname LIKE '[^akw]%'
+	--selects students where name does not start with a, k or w
+
+	--USING THE - WILDCARD
+	SELECT * FROM Patient WHERE PatLName LIKE '[a-e]%'
+	--selects students whose first name starts with a,b,c,d or e
+}
+
+
 ----BASIC SQL: WEEK 7---
 {
 	--List every subject in alphabetical order
@@ -48,52 +103,56 @@
 
 ----Join Tables: WEEK 8---
 {
-	--
+	--construct Select statement that contains an Equi-Join
+	--list all nursing staff members first name, last name and position
+	SELECT stafname, stalname, nurposition from staff
+	inner join nurse ON staff.staid = nurse.nurid
 }
-
-
 
 ----Sub Query: WEEK 9---
 {
 	--
 }
 
-
 ----Correlated Sub Query: WEEK 10---
 {
 	--
 }
-
 
 ----REVIEW: WEEK 11---
 {
 	--
 }
 
+-- Use the explation below if you are stuck on what parts of a query to use
+-- SELECT   -> list the columns (and expressions) to be returned from the query​
+-- FROM     -> indicate the table(s) or view(s) from which data will be obtained​
+-- WHERE    -> (Comparison operators, AND, OR, is not null, in/not in, between) indicate the conditions under which a row will be included in the result​
+-- GROUP BY -> (using aggregate functions AVG, MIN, MAX, SUM and COUNT) indicate categorization of results ​
+-- HAVING   -> indicate the conditions under which a category (group) will be included​
+-- ORDER BY -> Sorts the result according to specified criteria
 
-
---HARD QUESTIONS
+----HARD QUESTIONS
 {
 	--
 }
 
---SQL PRACTICE EXAM 1
+----SQL PRACTICE EXAM 1
 {
 	--
 }
 
---SQL PRACTICE EXAM 2
+----SQL PRACTICE EXAM 2
 {
 	--
 }
 
---SQL PRACTICE EXAM 3
+----SQL PRACTICE EXAM 3
 {
 	--
 }
 
-
---CREATE TABLE
+----CREATE TABLE
 {
 	CREATE TABLE student
 	(
@@ -123,7 +182,7 @@
 	);
 }
 
---INSERT DATA
+----INSERT DATA
 {
 	--
 }
