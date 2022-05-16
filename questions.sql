@@ -131,7 +131,40 @@
 	where StafName = 'Christopher'
 	and StaLname = "Hanton";
 
+	--List distinct ward names where nurses have worked in "night" shifts order by name ascending
+	Select distinct wardname 
+	from nuseward nw, ward w
+	where nw.wardno = w.wardno
+		and shift = 'Night';
 
+	--List full name of all staff that live in the same state aas staff employee S632
+	-- SELF JOINS MUST BE CUSTOM NAMED
+	select s1.stafname, s1.stalname
+	from staff s1, staff s2
+	where s1.stastate = s2.stastate
+	and s2.staid = 'S632';
+
+	--List full name and salary of staff who get paid more than Christoper Hanton S632
+	Select s1.stafname, s1.stalname, s1.stasalary
+	from staff s1, staff s2
+	where s2.staid = 'S632'
+		and s1.stasalary > s2.stasalary;
+
+	--For Christopher Hanton give his salary, and list the number and name of the wards he has worked in
+	Select stacsalary, w.wardno, wardname
+	from staff s, nurseward ns, ward w
+	where s.staid = ns.nurid
+		and ns.wardno = w.wardno
+		and s.staid = 'S632';
+
+	--List full name of the staff whose salary fall between the salary of Mikalya Vida and Natasha Laboureyas, not inclusive
+	-- Inclusive would allow the use of the <= and >=
+	Select s1.stafname, s1.stalname, s1.stacsalary
+	from staff s1, staff s2, staff s3
+	where s1.stacsalary > s2.stacsalary
+		and s1.stacsalary < s3.stacsalary
+		and s2.staid = 's837' and s3.staid = 's673';
+	
 }
 
 ----Sub Query: WEEK 9---
