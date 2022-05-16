@@ -52,7 +52,6 @@
 	--selects students whose first name starts with a,b,c,d or e
 }
 
-
 ----BASIC SQL: WEEK 7---
 {
 	--List every subject in alphabetical order
@@ -103,10 +102,19 @@
 
 ----Join Tables: WEEK 8---
 {
-	--construct Select statement that contains an Equi-Join
 	--list all nursing staff members first name, last name and position
 	SELECT stafname, stalname, nurposition from staff
 	inner join nurse ON staff.staid = nurse.nurid
+
+	--list all the ward numbers that have staff members from VIctoria state, eliminate duplicate values and sort ascending
+	select distinct wardno
+	FROM staff
+		inner join nurse ON staff.staid = nurse.nurid
+		inner join nurseward ON nurse.nurid = nurseward.nurid
+	where stastate = 'VIC'
+	order by 1
+
+	
 }
 
 ----Sub Query: WEEK 9---
