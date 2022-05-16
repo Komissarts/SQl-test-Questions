@@ -77,6 +77,20 @@
 	--
 }
 
+--SQL PRACTICE EXAM 1
+{
+	--
+}
+
+--SQL PRACTICE EXAM 2
+{
+	--
+}
+
+--SQL PRACTICE EXAM 3
+{
+	--
+}
 
 
 --CREATE TABLE
