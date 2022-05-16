@@ -129,7 +129,7 @@
 		inner join nurseward nw on n.nurid = nw.nurid
 		inner join ward w on w.wardno = nw.wardno
 	where StafName = 'Christopher'
-	and StaLname = "Hanton";
+	and StaLname = 'Hanton';
 
 	--List distinct ward names where nurses have worked in "night" shifts order by name ascending
 	Select distinct wardname 
@@ -164,6 +164,53 @@
 	where s1.stacsalary > s2.stacsalary
 		and s1.stacsalary < s3.stacsalary
 		and s2.staid = 's837' and s3.staid = 's673';
+
+	-- list all ward umbers and staff ID of those who have worked in them
+	select ward.wardno, nurid
+	from ward
+		left outer join nurseward
+			on ward.wardno = nurseward.wardno
+	order by ward.wardno;
+
+	select ward.wardno, nurid
+	from nurseward
+		right outer join ward
+			on ward.wardno = nurseward.wardno
+	order by ward.wardno;
+
+	--Which staff members have not worked in any wards?
+	-- make sure to use the same column in where as was used in the join statement
+	select staid
+	from staff
+		left outer join nurseward
+			on staff.staid = nurseward.nurid
+	where nurid is null
+	order by 1;
+
+	--List all the availible wards in 2014 and the capacity of those that are still availible
+	select w1.wardname, w2.wardcap
+	from ward2014 w1
+		left outer join ward w2
+			on w1.wardno = w2.wardno;
+
+	--whaich wards used to be active in 2014, and are not provided anymore?
+	select w1.wardname
+	from ward2014 w1
+		left outer join ward w2
+			on w1.wardno = w2.wardno
+	where w2.wardno is null;
+
+	--list all the wards that were availible in both the ward2014 and the current wards?
+	--wanting to see both sides of table means full outer join
+	select w1.wardname, w2.wardname
+	from ward2014 w1
+		full outer join ward w2
+			on w1.wardno = w2.wardno;
+
+	SELECT coalesce(w.wardname, '') || coalesce(w14.wardname, '') as name 
+	FROM ward w
+		Full Outer Join ward2014 w14 ON w.wardno = w14.wardno
+	where w.wardno is null or w14.wardno is null;
 	
 }
 
