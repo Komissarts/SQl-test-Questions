@@ -72,6 +72,13 @@
 
 
 
+--HARD QUESTIONS
+{
+	--
+}
+
+
+
 
 
 CREATE TABLE student
