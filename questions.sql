@@ -216,12 +216,214 @@
 
 ----Sub Query: WEEK 9---
 {
-	--
-}
+	--List all admission dates and symptoms for the patient “Jane Adams”.
+		SELECT pm.patadmdate,  pm.patsymp
+		FROM patmchart pm, patient p 
+		WHERE pm.patid = p.patid
+		and patfname = 'Jane' and patlname = 'Adams';
+
+		-- b) Subquery
+		SELECT pm.patadmdate,  pm.patsymp 
+		FROM patmchart pm
+		WHERE patid in (
+			SELECT patid
+			FROM Patient 
+			WHERE patfname = 'Jane' and patlname = 'Adams');
+
+	--Give all patients that originate from the same state as “Mitchell Newell”. Do not include Mitchell Newell in the results.
+		SELECT p1.patfname, p1.patlname
+		FROM patient p1 inner join patient mitch 
+		ON p1.patstate = mitch.patstate and p1.patid != mitch.patid
+		Where mitch.Patfname = 'Mitchell' and mitch.patlname = 'Newell';
+		-- b) Subquery
+		SELECT patfname, patlname 
+		From Patient 
+		Where PatState = (
+			SELECT PatState 
+			FROM Patient 
+			WHERE Patfname = 'Mitchell' and patlname = 'Newell'
+		) AND Patfname != 'Mitchell' and patlname != 'Newell';
+
+	--Give drugs with prices that fall between the price of Nurofen and Morphine inclusively.
+		Select d0.drugname, d0.drugprice
+		from drug d0, 
+			drug d1, 
+			drug d2
+		where d0.drugprice between d1.drugprice and d2.drugprice
+			and d1.drugname = 'Nurofen' and d2.drugname = 'Morphine';
+		-- b) subquery
+		Select drugname, drugprice
+		from drug
+		where drugprice between
+			(Select drugprice from drug where drugname = 'Nurofen')
+			and 
+			(Select drugprice from drug where drugname = 'Morphine');
+
+	--Give the name and price of the most expensive drug.
+		select d.drugname, d.drugprice
+		from drug d
+		where d.drugprice = (
+			select max(drugprice)
+			from drug
+		);
+
+	-- List drugs that cost less than the average drug price.
+		Select drugname, drugprice 
+		From drug 
+		where drugprice < (
+			SELECT avg(drugprice) 
+			from drug
+		);
+	
+	-- Give drug names and prices for drugs that are less 
+	-- expensive than all drugs with the dosage “As prescribed 
+	-- by doctor” (Hint: use < all predicate).
+		Select drugname, drugprice 
+		From Drug 
+		where drugprice < all(
+			SELECT drugprice 
+			FROM drug 
+			WHERE drugdosg = 'As prescribed by doctor'
+		);
+
+	--List all patient IDs and names who have been prescribed Panadol or Nurofen. Sort by patient ids.
+		SELECT p.patid, p.patfname, p.patlname
+		from patient p
+		where p.patid in(
+			select distinct patid
+			from prescribeddrug
+			where drugno in (
+				select drugno
+				from drug
+				where drugname = 'Panadol' 
+				or drugname = 'Nurofen'
+			)
+		)
+		Order by patid;
+
+	-- Give the patient(s) name which has been prescribed the largest single prescription amount of Panadol (D1486032).
+		Select patfname, patlname
+		from patient
+		where patid = (
+			select distinct patid
+			from prescribeddrug
+			where drugamt = (
+				select max(drugamt)
+				from prescribeddrug
+				where drugno = 'D1486032'
+			) and drugno = 'D1486032'
+		);
+
+	--Find the patient chart(s) (patID and patCID) which have the largest number of prescriptions.
+		SELECT patid, patcid, count(*) 
+		from prescribedDrug
+		Group BY patid, patcid
+		HAVING count(*) >= ALL(
+			Select count(*) FROM prescribedDrug
+			group By patid, patcid
+		);
+	
+	--List patient charts (patient id, chart id, admission date, and diagnosis) that have been prescribed Vitamin C. Sort by the admission date. (Hint: you may need to join two tables first and then use a subquery)
+		SELECT patid, patcid, patadmdate, patdiag 
+		FROM patmchart 
+		where (patid, patcid) in (
+			SELECT patid, patcid 
+			from prescribedDrug 
+			where drugno in(
+				select drugno
+				from drug
+				where drugname = 'Vitamin C'
+			)
+		) order by patadmdate;
+
+	--Give the drug(s) name and description used for the most recent patient chart.
+		select drugname, drugdesc
+		from drug
+		where drugno in(
+			select drugno
+			from prescribeddrug pd
+				inner join patmchart pmt
+					on pd.patid = pmt.patid and pd.patcid = pmt.patcid
+			where patadmdate = (
+				select max(patadmdate) from patmchart
+			)
+		);
+}		
 
 ----Correlated Sub Query: WEEK 10---
 {
-	--
+	--List all drugs with method “Oral use with water”and any patient charts that 
+	--includes these drugs (Give two different ways of constructing this query). 
+	--Show the columns DrugNo, DrugName, DrugMethod and PatCID. Sort results by drugNo
+	
+		-- method 1:
+		select d.drugno, d.drugname, d.drugmethod, pd.patcid
+		from drug d left join prescribedDrug pd
+		on d.drugno = pd.drugno
+		where drugmethod = 'Oral use with water'
+		order by drugno;
+
+		-- method 2:
+		select d.drugno, d.drugname, d.drugmethod, pd.patcid
+		from prescribedDrug pd right join drug d
+		on d.drugno = pd.drugno
+		where drugmethod = 'Oral use with water'
+		order by drugno;
+
+	-- List all drugs with method ‘Oral use with water’ and all patient charts (those patient 
+	--charts that include oral use with water drugs and those that do not). Show the columns 
+	--patid, patcid, drugno, drugname, drugmethod. Sort by the patid, patcid, drugno
+		select pmc.patid, pmc.patcid, dapd.drugno, dapd.drugname, dapd.drugmethod
+		from patmchart pmc
+		full outer join
+			(
+				select pd.patid, pd.patcid, d.drugno, d.drugname, d.drugmethod
+				from drug d left outer join prescribedDrug pd
+				on d.drugno = pd.drugno
+				where drugmethod = 'Oral use with water'
+			) dapd
+			on pmc.patid = dapd.patid
+			and pmc.patcid = dapd.patcid
+			order by patid, patcid, drugno;
+
+	--Which drugs are not used in any patient chart? (use uncorrelated/simple subquery operation)
+		select drugno, drugname 
+		from drug
+		where drugno NOT IN (
+			select drugno from prescribeddrug
+		)
+
+	--Which drugs are not used in any patient chart? (use correlated subquery operation)
+		select d.drugno, d.drugname 
+		from drug d
+		where NOT EXISTS 
+		(
+			select drugno 
+			from prescribeddrug pd
+			where d.drugno = pd.drugno
+		);
+	
+	--List each drugNo and the patient chartID that have been prescribed with the 
+	--largest amount of this drug(use correlated subquery).
+		select pd0.drugno, pd0.patcid, pd0.drugamt
+		from prescribeddrug pd0
+		where drugamt = 
+		(
+			select max(pd1.drugamt)
+			from prescribeddrug pd1
+			where pd1.drugno = pd0.drugno
+		);
+
+	--List DrugNo that are used in more than one patient chart (use correlated subquery operation). Sort your results based on DrugNo.
+		select distinct drugno
+		from prescribeddrug pd0
+		where drugno in
+		(
+			select drugno
+			from prescribeddrug pd1
+			where pd1.patcid <> pd0.patcid 
+			and pd1.patid <> pd0.patid
+		) order by drugno;
 }
 
 ----REVIEW: WEEK 11---
