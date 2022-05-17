@@ -229,8 +229,9 @@
 			SELECT patid
 			FROM Patient 
 			WHERE patfname = 'Jane' and patlname = 'Adams');
-
-	--Give all patients that originate from the same state as “Mitchell Newell”. Do not include Mitchell Newell in the results.
+		
+	--Give all patients that originate from the same state as “Mitchell Newell”. 
+	--Do not include Mitchell Newell in the results.
 		SELECT p1.patfname, p1.patlname
 		FROM patient p1 inner join patient mitch 
 		ON p1.patstate = mitch.patstate and p1.patid != mitch.patid
