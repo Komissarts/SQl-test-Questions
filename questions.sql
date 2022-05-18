@@ -730,7 +730,54 @@
 
 ----SQL PRACTICE EXAM 3
 {
-	--
+	-- List all price categories recorded in the MENU table, eliminating duplicates.
+		select distinct price
+		from menu	
+	
+	-- Give the cheapest pizzas from each country of origin. Sort your results by country in ascending order.
+		from menu
+		where country is not null
+		group by country
+		order by country;
+	
+	-- Give cheapest price of pizzas from each country of origin, only list countries with cheapest price of less than $7.00
+		select country, price as min
+		from menu
+		where price < 7
+		and country is not null
+	
+	-- List all 'meat' ingredients used in pizzas, also list the pizza names. Do not use a subquery.
+		select r.ingredient, pizza
+		from recipe r left join items i
+		on r.ingredient = i.ingredient
+		where type = 'meat'
+
+	-- List pizzas with at least one 'meat' ingredient.You must use a subquery.
+		select distinct pizza
+		from recipe
+		where ingredient in (
+			select ingredient
+			from items
+			where type = 'meat'
+		)
+
+	--List all pizzas that cost less than 'siciliano' pizza, also give their prices.
+		select pizza, price
+		from menu
+		where price < (
+			select price
+			from menu
+			where pizza = 'siciliano'
+		)
+	
+	-- List the ingredients, and for each ingredient, also list the pizza that contains the largest amount of this ingredient.
+		select ingredient, pizza, amount
+		from recipe r0
+		where amount = (
+			select max(amount)
+			from recipe r1
+			where r1.ingredient = r0.ingredient
+		)
 }
 
 ----CREATE TABLE
