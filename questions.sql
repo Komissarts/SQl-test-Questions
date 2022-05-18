@@ -581,10 +581,20 @@
 		);
 
 	-- 8. Which students have never done an internship?
+		--Using Outer Join
 		select s.sno, s.sname
 		from student s left outer join enroll i
 		on s.sno = i.sno
 		where i.sno is null;
+
+		--Using Corrolated Subquery
+		select s.sno, s.sname
+		from student s
+		where s.sno NOT IN (
+			select sno
+			from subject s1
+			where s1.sno = s.sno
+		);
 
 	-- 9. List the average internship mark (rounded to 2 decimal places) for all students. 
 	-- Make sure to exclude internships that are not yet completed. Order from highest average to lowest average.
