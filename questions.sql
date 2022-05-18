@@ -15,8 +15,6 @@
 			OR 
 			productdescription like'%Desk%';
 
-
-
 		select productid, productdescription
 		from product_t
 		where productdescription like any (ARRAY['%Table%', '%Desk%']);
@@ -644,29 +642,37 @@
 
 ----SQL PRACTICE EXAM 1
 {
-	--List pizzas with the substring 'i' anywhere within the pizza name.
+	-- L1-0 List pizzas with the substring 'i' anywhere within the pizza name.
 		select pizza from menu where pizza like '%i%';
 
-	--Give the average price of pizzas from each country of origin. Change the column name related to average price to "average".
+	-- L2-3 Give the average price of pizzas from each country of origin. Change the column name related to average price to "average".
 		select country, avg(price) as average
 		from menu 
 		where country is not null
 		group by country
 
-	--Give the average price of pizzas from each country of origin, do not list countries with only one pizza.
+	-- L3-6 Give the average price of pizzas from each country of origin, do not list countries with only one pizza.
 		select country, avg(price)
 		from menu
 		where country is not null 
 		group by country
 		having count(country) > 1;
 	
-	--List all ingredients and their types for the 'margarita' pizza. Do not use a subquery.
+	-- L4-9 List all ingredients and their types for the 'margarita' pizza. Do not use a subquery.
 		select distinct recipe.ingredient, type
 		from recipe left join items
 		on recipe.ingredient = items.ingredient
 		where recipe.pizza = 'margarita'
 
-	--Give all pizzas that originate from the same country as the 'siciliano' pizza.  Do not include 'siciliano' pizza in your result table. Sort your results based on pizza.
+	-- L5-12 Give pizzas and prices for pizzas that are more expensive than all Italian pizzas. 
+		select pizza, price
+		from menu
+		where price > (
+			select max(m1.price)
+			from menu m1
+			where m1.country = 'italy')
+
+	-- L6-18 Give all pizzas that originate from the same country as the 'siciliano' pizza.  Do not include 'siciliano' pizza in your result table. Sort your results based on pizza.
 		Select pizza
 		from menu
 		where country in (
@@ -676,7 +682,7 @@
 		) and pizza != 'siciliano'
 		order by pizza
 	
-	--List each ingredient and the pizza that contains the largest amount of this ingredient.
+	-- L7-21 List each ingredient and the pizza that contains the largest amount of this ingredient.
 		select ingredient, pizza, amount
 		from recipe r0
 		where amount = (
@@ -688,19 +694,19 @@
 
 ----SQL PRACTICE EXAM 2
 {
-	--List all pizzas, giving pizza name, price and country of origin where the country of origin has NOT been recorded (i.e. is missing).
+	-- L1-1 List all pizzas, giving pizza name, price and country of origin where the country of origin has NOT been recorded (i.e. is missing).
 		select pizza, price, country
 		from menu
 		where country is null
 	
-	--Give the most expensive pizza price from each country of origin. Sort your results by country in ascending order.
+	-- L2-4 Give the most expensive pizza price from each country of origin. Sort your results by country in ascending order.
 		select country, max(price)
 		from menu
 		where country is not null
 		group by country
 		order by country;
 	
-	--Give the average price of pizzas from each country of origin, only list countries with 'i' in the country's name. Sort your results based on country in ascending order.
+	-- L3-7 Give the average price of pizzas from each country of origin, only list countries with 'i' in the country's name. Sort your results based on country in ascending order.
 		select country, avg(price) as avg
 		from menu
 		where country is not null
@@ -781,7 +787,7 @@
 			from menu
 			where pizza = 'siciliano'
 		)
-	
+
 	-- List the ingredients, and for each ingredient, also list the pizza that contains the largest amount of this ingredient.
 		select ingredient, pizza, amount
 		from recipe r0
