@@ -360,7 +360,6 @@
 	--List all drugs with method “Oral use with water”and any patient charts that 
 	--includes these drugs (Give two different ways of constructing this query). 
 	--Show the columns DrugNo, DrugName, DrugMethod and PatCID. Sort results by drugNo
-	
 		-- method 1:
 		select d.drugno, d.drugname, d.drugmethod, pd.patcid
 		from drug d left join prescribedDrug pd
@@ -515,11 +514,6 @@
 			from enroll
 			where sno = e.sno
 		) order by subno, sno
-}
-
-----HARD QUESTIONS
-{
-	--
 }
 
 ----Mock SQL
