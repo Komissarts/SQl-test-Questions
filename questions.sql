@@ -516,6 +516,67 @@
 		) order by subno, sno
 }
 
+----REVIEW WEEK 12-----
+{
+	--List all student numbers who have any marks higher than 90 in student number order.(Only display each student's number once)
+		Select distinct(e.sno)
+		from enroll e
+		where e.mark>90
+		order by 1
+
+	--For each student, show their student number and their average mark as amark. ONly show marks between student number '9800010' and '9800023'
+	-- order by average mark
+		select sno, avg(mark) as amark
+		from enroll
+		where sno >= '9800010' and sno <= '9800023'
+		group by sno
+		order by 2
+
+	-- Give the lowest mark for each student. Only list students whose lowest mark is <50.
+	--Show their student number and their lowest mark as 'mmark'list the results in student number order
+		select distinct sno, mark as mmark
+		from enroll
+		where mark < 50
+		order by 1 --INCOMPLETE!!!!!
+
+	-----------------------------------------------------------------HARDER QUESTIONS--------------------------------------------------------------------------
+
+	-- List student number, name and telephone number where their average mark is less than 60 
+	-- and have enrolled in more than 2 subjects list the result in descending student number order
+		select distinct s.sno, sname, telno
+		from student s inner join enroll e
+		on s.sno = e.sno
+		group by s.sno, e.sno
+		having s.sno in (
+			select sno
+			from enroll
+			group by sno
+			having avg(mark) < 60 and count(sno) > 2
+		) Order by 1 desc
+
+	-- List all subject number and subject name for subjects that have the same quota as subject '31434'
+	-- do not include subject 31434 in the results. list results based on subject number in ascending order
+		select subno, subname
+		from subject
+		where quota in (
+			select quota
+			from subject
+			where subno = '31434'
+		) and subno != '31434'
+		order by 1
+		
+	-- Display the subject number, subject name, student number of students who have recived a mark higher than average in this subject
+	-- sort results on student number and subject number
+		select e.sno, s.sname, subno, mark
+		from student s inner join enroll e
+		on s.sno = e.sno
+		where mark > (
+			select avg(mark)
+			from enroll e2
+			where e2.subno = e.subno
+		) order by 1, subno
+}
+
 ----Mock SQL
 {
 	-- 1. List all the companies that have a quota of more than 7 students in alphabetical order.
