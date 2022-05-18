@@ -518,17 +518,17 @@
 
 ----Mock SQL
 {
-	--1. List all the companies that have a quota of more than 7 students in alphabetical order.
+	-- 1. List all the companies that have a quota of more than 7 students in alphabetical order.
 		select subno, quota
 		from subject
 		where quota > 7
 		order by subno asc
 
-	--2. What is the average quota for companies
+	-- 2. What is the average quota for companies
 		select round(avg(quota), 2) as average_quota
 		from subject
 
-	--3. List all the students doing internships that are still in progress (i.e. don’t yet have a mark) for companies with ‘tu’ in their name.
+	-- 3. List all the students doing internships that are still in progress (i.e. don’t yet have a mark) for companies with ‘tu’ in their name.
 		select s.sno, s.sname, c.subname
 		from student s inner join enroll i 
 		on s.sno=i.sno inner join subject c 
@@ -536,18 +536,18 @@
 		where i.mark is null
 		and subname LIKE ‘%tu%’
 	
-	--4. List all companies that have a quota divisible by 4 (without remainder).
+	-- 4. List all companies that have a quota divisible by 4 (without remainder).
 		select quota 
 		from subject
 		where mod(quota, 4) = 0
 
-	--5. List the students that have done more than 3 internships.
+	-- 5. List the students that have done more than 3 internships.
 		select sno, count(sno) as count
 		from enroll
 		group by sno
 		having count(sno) > 3;
 
-	--6. List all the students that have received a mark of 0 for their internships.
+	-- 6. List all the students that have received a mark of 0 for their internships.
 		--CROSS JOINS
 		SELECT distinct i.sno, s.sname, c.subname
 		FROM subject c, enroll i, student s
@@ -565,7 +565,7 @@
 		--SUBQUERY
 		select distinct 
 
-	--7. Find the student that has the highest mark for any internship.
+	-- 7. Find the student that has the highest mark for any internship.
 		select distinct(i.sno), s.sname, i.mark, c.subname
 		FROM subject c, enroll i, student s
 		where s.sno = i.sno
@@ -744,20 +744,20 @@
 {
 	-- List all price categories recorded in the MENU table, eliminating duplicates.
 		select distinct price
-		from menu	
-	
+		from menu
+
 	-- Give the cheapest pizzas from each country of origin. Sort your results by country in ascending order.
 		from menu
 		where country is not null
 		group by country
 		order by country;
-	
+
 	-- Give cheapest price of pizzas from each country of origin, only list countries with cheapest price of less than $7.00
 		select country, price as min
 		from menu
 		where price < 7
 		and country is not null
-	
+
 	-- List all 'meat' ingredients used in pizzas, also list the pizza names. Do not use a subquery.
 		select r.ingredient, pizza
 		from recipe r left join items i
@@ -770,8 +770,7 @@
 		where ingredient in (
 			select ingredient
 			from items
-			where type = 'meat'
-		)
+			where type = 'meat')
 
 	--List all pizzas that cost less than 'siciliano' pizza, also give their prices.
 		select pizza, price
@@ -779,8 +778,7 @@
 		where price < (
 			select price
 			from menu
-			where pizza = 'siciliano'
-		)
+			where pizza = 'siciliano')
 
 	-- List the ingredients, and for each ingredient, also list the pizza that contains the largest amount of this ingredient.
 		select ingredient, pizza, amount
