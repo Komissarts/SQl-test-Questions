@@ -55,163 +55,161 @@
 ----BASIC SQL: WEEK 7---
 {
 	--List every subject in alphabetical order
-	select * from Subject ORDER BY subname asc; 
+		select * from Subject ORDER BY subname asc; 
 
 	--List students ordered by mark in descending order
-	select * from Student order by mark desc, sname asc; 
+		select * from Student order by mark desc, sname asc; 
 
 	--List all unique marks methods
-	select distinct(mark) From student
+		select distinct(mark) From student
 
 	--List all subjects with marks less than 10 and have a quota of 5
-	select subname from Subject where mark < 10 and quota = 5;
+		select subname from Subject where mark < 10 and quota = 5;
 
 	--list all drugs except those with a dosage of "every 4 hours" or "every 6 hrs"
-	select drugname from drug where drugDosg != 'Every 4 hrs' and drugDosg != 'Every 6 hrs';
+		select drugname from drug where drugDosg != 'Every 4 hrs' and drugDosg != 'Every 6 hrs';
 
 	--get all information for patients that live in sydney, Mortdale and Ultimo
-	select * from patient where patcity in('Sydney', 'Mortdale', 'Ultimo');
+		select * from patient where patcity in('Sydney', 'Mortdale', 'Ultimo');
 
 	-- List Drugs (only name and price) that cost between 10 and 20 dollars, inclusive
-	select drugname, drugprice from drug where drugPrice >= 10 and drugPrice <= 20;
+		select drugname, drugprice from drug where drugPrice >= 10 and drugPrice <= 20;
 
 	-- List Drugs with a name ending with letters 'ine'
-	select drugname from drug where drugname like '%ine';
+		select drugname from drug where drugname like '%ine';
 
 	-- List all patients, giving first, last name and whether the number is not null
-	select patfname, patlname, patphone from patient where patPhone is not null;
+		select patfname, patlname, patphone from patient where patPhone is not null;
 
 	--Get total number of rows in the drug table
-	select count(*) from drug
+		select count(*) from drug
 
 	-- How Many different drug methods are recorded in the drug table? call the column no_of_methods
-	select count(distinct(drugmethod)) as no_of_methods from drug
+		select count(distinct(drugmethod)) as no_of_methods from drug
 
 	--Get the price of the cheapest drug with the method of "Oral use with Water"
-	Select min(drugprice) from DRUG where Drugmethod = 'Oral use with water';
+		Select min(drugprice) from DRUG where Drugmethod = 'Oral use with water';
 
 	--Get the total price for panadol and Aspirin
-	select sum(drugPrice) from drug where drugname in ('Panadol', 'Aspirin');
+		select sum(drugPrice) from drug where drugname in ('Panadol', 'Aspirin');
 
 	--Give the average price of drugs for each DrugMethod. include the drugMethod and average price (called avgPrice) in output
-	select drugmethod, round(avg(drugprice), 2) as avgPrice from drug group by drugmethod;
+		select drugmethod, round(avg(drugprice), 2) as avgPrice from drug group by drugmethod;
 
 	--Give the average price of drugs for each drug method. Do not include drug methods with only one drug. Include the drug method and average (called average price) in output
-	select drugmethod, avg(drugprice) as avgPrice from drug group by drugmethod having count(*) > 1;
+		select drugmethod, avg(drugprice) as avgPrice from drug group by drugmethod having count(*) > 1;
 }
 
 ----Join Tables: WEEK 8---
 {
 	--list all nursing staff members first name, last name and position
-	SELECT stafname, stalname, nurposition from staff
-	inner join nurse ON staff.staid = nurse.nurid
+		SELECT stafname, stalname, nurposition from staff
+		inner join nurse ON staff.staid = nurse.nurid
 
-	SELECT stafname, stalname, nurposition 
-	from staff cross join nurse 
-	where staff.staid = nurse.nurid
+		SELECT stafname, stalname, nurposition 
+		from staff cross join nurse 
+		where staff.staid = nurse.nurid
 
-	SELECT stafname, stalname, nurposition 
-	from staff, nurse 
-	where staff.staid = nurse.nurid
+		SELECT stafname, stalname, nurposition 
+		from staff, nurse 
+		where staff.staid = nurse.nurid
 
 	--list all the ward numbers that have staff members from VIctoria state, eliminate duplicate values and sort ascending
-	select distinct wardno
-	FROM staff 
-		inner join nurse ON staff.staid = nurse.nurid
-		inner join nurseward ON nurse.nurid = nurseward.nurid
-	where stastate = 'VIC'
-	order by 1
+		select distinct wardno
+		FROM staff 
+			inner join nurse ON staff.staid = nurse.nurid
+			inner join nurseward ON nurse.nurid = nurseward.nurid
+		where stastate = 'VIC'
+		order by 1
 
 	--LIST the ward numbers and the ward name that "CHRISTOPHER HANTON" has worked in
-	SELECT w.wardno, wardname
-	from staff s
-		inner join nurse n on s.staId = n.nurid
-		inner join nurseward nw on n.nurid = nw.nurid
-		inner join ward w on w.wardno = nw.wardno
-	where StafName = 'Christopher'
-	and StaLname = 'Hanton';
+		SELECT w.wardno, wardname
+		from staff s
+			inner join nurse n on s.staId = n.nurid
+			inner join nurseward nw on n.nurid = nw.nurid
+			inner join ward w on w.wardno = nw.wardno
+		where StafName = 'Christopher'
+		and StaLname = 'Hanton';
 
 	--List distinct ward names where nurses have worked in "night" shifts order by name ascending
-	Select distinct wardname 
-	from nuseward nw, ward w
-	where nw.wardno = w.wardno
-		and shift = 'Night';
+		Select distinct wardname 
+		from nuseward nw, ward w
+		where nw.wardno = w.wardno
+			and shift = 'Night';
 
 	--List full name of all staff that live in the same state aas staff employee S632
 	-- SELF JOINS MUST BE CUSTOM NAMED
-	select s1.stafname, s1.stalname
-	from staff s1, staff s2
-	where s1.stastate = s2.stastate
-	and s2.staid = 'S632';
+		select s1.stafname, s1.stalname
+		from staff s1, staff s2
+		where s1.stastate = s2.stastate
+		and s2.staid = 'S632';
 
 	--List full name and salary of staff who get paid more than Christoper Hanton S632
-	Select s1.stafname, s1.stalname, s1.stasalary
-	from staff s1, staff s2
-	where s2.staid = 'S632'
-		and s1.stasalary > s2.stasalary;
+		Select s1.stafname, s1.stalname, s1.stasalary
+		from staff s1, staff s2
+		where s2.staid = 'S632'
+			and s1.stasalary > s2.stasalary;
 
 	--For Christopher Hanton give his salary, and list the number and name of the wards he has worked in
-	Select stacsalary, w.wardno, wardname
-	from staff s, nurseward ns, ward w
-	where s.staid = ns.nurid
-		and ns.wardno = w.wardno
-		and s.staid = 'S632';
+		Select stacsalary, w.wardno, wardname
+		from staff s, nurseward ns, ward w
+		where s.staid = ns.nurid
+			and ns.wardno = w.wardno
+			and s.staid = 'S632';
 
 	--List full name of the staff whose salary fall between the salary of Mikalya Vida and Natasha Laboureyas, not inclusive
 	-- Inclusive would allow the use of the <= and >=
-	Select s1.stafname, s1.stalname, s1.stacsalary
-	from staff s1, staff s2, staff s3
-	where s1.stacsalary > s2.stacsalary
-		and s1.stacsalary < s3.stacsalary
-		and s2.staid = 's837' and s3.staid = 's673';
+		Select s1.stafname, s1.stalname, s1.stacsalary
+		from staff s1, staff s2, staff s3
+		where s1.stacsalary > s2.stacsalary
+			and s1.stacsalary < s3.stacsalary
+			and s2.staid = 's837' and s3.staid = 's673';
 
 	-- list all ward umbers and staff ID of those who have worked in them
-	select ward.wardno, nurid
-	from ward
-		left outer join nurseward
-			on ward.wardno = nurseward.wardno
-	order by ward.wardno;
+		select ward.wardno, nurid
+		from ward
+			left outer join nurseward
+				on ward.wardno = nurseward.wardno
+		order by ward.wardno;
 
-	select ward.wardno, nurid
-	from nurseward
-		right outer join ward
-			on ward.wardno = nurseward.wardno
-	order by ward.wardno;
+		select ward.wardno, nurid
+		from nurseward
+			right outer join ward
+				on ward.wardno = nurseward.wardno
+		order by ward.wardno;
 
 	--Which staff members have not worked in any wards?
 	-- make sure to use the same column in where as was used in the join statement
-	select staid
-	from staff
-		left outer join nurseward
-			on staff.staid = nurseward.nurid
-	where nurid is null
-	order by 1;
+		select staid
+		from staff left outer join nurseward
+		on staff.staid = nurseward.nurid
+		where nurid is null
+		order by 1;
 
 	--List all the availible wards in 2014 and the capacity of those that are still availible
-	select w1.wardname, w2.wardcap
-	from ward2014 w1
-		left outer join ward w2
-			on w1.wardno = w2.wardno;
+		select w1.wardname, w2.wardcap
+		from ward2014 w1
+			left outer join ward w2
+				on w1.wardno = w2.wardno;
 
 	--whaich wards used to be active in 2014, and are not provided anymore?
-	select w1.wardname
-	from ward2014 w1
-		left outer join ward w2
-			on w1.wardno = w2.wardno
-	where w2.wardno is null;
+		select w1.wardname
+		from ward2014 w1
+			left outer join ward w2
+				on w1.wardno = w2.wardno
+		where w2.wardno is null;
 
 	--list all the wards that were availible in both the ward2014 and the current wards?
 	--wanting to see both sides of table means full outer join
-	select w1.wardname, w2.wardname
-	from ward2014 w1
-		full outer join ward w2
-			on w1.wardno = w2.wardno;
+		select w1.wardname, w2.wardname
+		from ward2014 w1
+			full outer join ward w2
+				on w1.wardno = w2.wardno;
 
-	SELECT coalesce(w.wardname, '') || coalesce(w14.wardname, '') as name 
-	FROM ward w
-		Full Outer Join ward2014 w14 ON w.wardno = w14.wardno
-	where w.wardno is null or w14.wardno is null;
-	
+		SELECT coalesce(w.wardname, '') || coalesce(w14.wardname, '') as name 
+		FROM ward w
+			Full Outer Join ward2014 w14 ON w.wardno = w14.wardno
+		where w.wardno is null or w14.wardno is null;
 }
 
 ----Sub Query: WEEK 9---
@@ -429,7 +427,88 @@
 
 ----REVIEW: WEEK 11---
 {
-	--
+	--Q1: Give employee Id, name, and date hired of the managers who have the highest experience (years employed) order by employee name.
+		select employeeid, employeename, employeedatehired
+		from employee_t
+		where employeedatehired in (
+			select min(employeedatehired)
+			from employee_t
+		) order by employeename
+
+	--Q1: Give employee Id, name, and date hired of the managers who have the highest experience (years employed) order by employee name.
+		select subno, subname, quota
+		from subject
+		where quota in (
+			select min(quota)
+			from subject
+		) order by subname
+
+	--Q4 (L7 or 6):  Give all manager names and date hired for managers whose work experience is higher than the work experience of their employees. List results in managers' name order.
+		select employeename, employeedatehired
+		from employee_t M
+		where employeeID = any (
+			select employeesupervisor 
+			from employee_t 
+			)
+		and employeedatehired <= (
+			select min (employeedatehired)
+			from employee_T E
+			where E.employeesupervisor = M.employeeid
+			)
+		order by employeename;
+	--Q4 (L7 or 6):  Give all subject names and quotas for prerequisites whose quota is higher than the quota of their subjects. List results in subject' name order.
+		select subname, quota
+		from subject sp
+		where subno = any (
+			select prerequisiteno
+			from subject 
+			)
+		and quota <= (
+			select min (quota)
+			from subject s
+			where s.prerequisiteno = sp.subno
+			)
+		order by subname;
+
+	--Q2 (L7): List Material ID and Product Id in which the Material has the highest quantity required for this material. List results in order of Material ID.
+		select materialid, productid
+		from uses_t u0
+		where quantityrequired = (
+			select max(quantityrequired)
+			from uses_t u1
+			where u1.materialid = u0.materialid
+		) order by materialid
+
+	--Q2 (L7): List studentno and subjectno in which the student has the highest mark required for this subject. List results in order of subjectno.
+		select subno, sno
+		from enroll e0
+		where mark = (
+			select max(mark)
+			from enroll e1
+			where e1.subjectno = e0.subjectno --can swap subno with stuno
+		) order by subjectno
+
+	-- Q3 (L7): For products that have used materials, show the product ID, product description, material ID, and quantity required of materials whose quantity required is higher than the average quantity required for that material.  Sort the results by product ID and then by material ID.
+		select u0.productid, p.productdescription, u0.materialid, u0.quantityrequired
+		from product_t p inner join uses_t u0
+		on u0.productid = p.productid
+		where quantityrequired > (
+			select avg(quantityrequired)
+			from uses_t
+			where materialid = u0.materialid
+		) order by productid, materialid
+
+	-- Q3 (L7): For products that have used materials, show the product ID, product description, material ID, 
+	-- and quantity required of materials whose quantity required is higher than the average quantity required 
+	-- for that material.  Sort the results by product ID and then by material ID.
+		select e.subno, s.subname, e.sno, e.mark
+		from subject s inner join enroll e
+		on e.subno = s.subno
+		where mark > (
+			select avg(mark)
+			from enroll
+			where sno = e.sno
+		) order by subno, sno
 }
 
 -- Use the explation below if you are stuck on what parts of a query to use
@@ -445,14 +524,177 @@
 	--
 }
 
+----Mock SQL
+{
+	--1. List all the companies that have a quota of more than 7 students in alphabetical order.
+		select companyno, quota
+		from company_t
+		where quota > 7
+		order by companyno asc
+
+	--2. What is the average quota for companies
+		select round(avg(quota), 2) as average_quota
+		from company_t
+
+	--3. List all the students doing internships that are still in progress (i.e. don’t yet have a mark) for companies with ‘tu’ in their name.
+		select s.studentno, s.studentfname, s.studentlname, c.companyname
+		from student_t s inner join internship_t i 
+		on s.studentno=i.studentno inner join company_t c 
+		on i.companyno = c.companyno
+		where i.mark is null
+		and companyname LIKE ‘%tu%’
+	
+	--4. List all companies that have a quota divisible by 4 (without remainder).
+		select quota 
+		from company_t
+		where mod(quota, 4) = 0
+
+	--5. List the students that have done more than 3 internships.
+		select studentno, count(studentno) as count
+		from internship_t
+		group by studentno
+		having count(studentno) > 3;
+
+	--6. List all the students that have received a mark of 0 for their internships.
+		--CROSS JOINS
+		SELECT distinct i.studentno, s.studentfname, s.studentlname, c.companyname
+		FROM company_t c, internship_t i, student_t s
+		WHERE c.companyno = i.companyno 
+		AND i.studentno = s.studentno
+		AND mark = 0;
+
+		--INNER JOINS
+		SELECT distinct i.studentno, s.studentfname, s.studentlname, c.companyname
+		FROM company_t c INNER JOIN internship_t i 
+		on c.companyno = i.companyno INNER JOIN student_t s 
+		on i.studentno = s.studentno
+		WHERE mark = 0;
+
+	--7. Find the student that has the highest mark for any internship.
+		select distinct(i.studentno), s.studentfname, s.studentlname, i.mark, c.companyname
+		FROM company_t c, internship_t i, student_t s
+		where s.studentno = i.studentno
+		and c.companyno = i.companyno
+		and i.mark = (
+			select max(mark)
+			from internship_t
+		);
+
+	-- 8. Which students have never done an internship?
+		select s.studentno, s.studentfname, s.studentlname
+		from student_t s left outer join internship_t i
+		on s.studentno = i.studentno
+		where i.studentno is null;
+
+	-- 9. List the average internship mark (rounded to 2 decimal places) for all students. 
+	-- Make sure to exclude internships that are not yet completed. Order from highest average to lowest average.
+		select s.studentno, round(avg(i.mark), 2) as avg_mark
+		from internship_t i inner join student_t s
+		on s.studentno = i.studentno
+		where i.mark is not null
+		group by s.studentno
+		order by 2 desc;
+
+	-- List all students that have achieved a mark greater than the average mark for that specific subject.
+
+}
+
 ----SQL PRACTICE EXAM 1
 {
-	--
+	--List pizzas with the substring 'i' anywhere within the pizza name.
+		select pizza from menu where pizza like '%i%';
+
+	--Give the average price of pizzas from each country of origin. Change the column name related to average price to "average".
+		select country, avg(price) as average
+		from menu 
+		where country is not null
+		group by country
+
+	--Give the average price of pizzas from each country of origin, do not list countries with only one pizza.
+		select country, avg(price)
+		from menu
+		where country is not null 
+		group by country
+		having count(country) > 1;
+	
+	--List all ingredients and their types for the 'margarita' pizza. Do not use a subquery.
+		select distinct recipe.ingredient, type
+		from recipe left join items
+		on recipe.ingredient = items.ingredient
+		where recipe.pizza = 'margarita'
+
+	--Give all pizzas that originate from the same country as the 'siciliano' pizza.  Do not include 'siciliano' pizza in your result table. Sort your results based on pizza.
+		Select pizza
+		from menu
+		where country in (
+			select country
+			from menu
+			where pizza = 'siciliano'
+		) and pizza != 'siciliano'
+		order by pizza
+	
+	--List each ingredient and the pizza that contains the largest amount of this ingredient.
+		select ingredient, pizza, amount
+		from recipe r0
+		where amount = (
+			select max(amount)
+			from recipe r1
+			where r1.ingredient = r0.ingredient
+		)
 }
 
 ----SQL PRACTICE EXAM 2
 {
-	--
+	--List all pizzas, giving pizza name, price and country of origin where the country of origin has NOT been recorded (i.e. is missing).
+		select pizza, price, country
+		from menu
+		where country is null
+	
+	--Give the most expensive pizza price from each country of origin. Sort your results by country in ascending order.
+		select country, max(price)
+		from menu
+		where country is not null
+		group by country
+		order by country;
+	
+	--Give the average price of pizzas from each country of origin, only list countries with 'i' in the country's name. Sort your results based on country in ascending order.
+		select country, avg(price) as avg
+		from menu
+		where country is not null
+		and country like '%i%'
+		group by country
+		order by country
+	
+	--List all 'fish' ingredients used in pizzas, also list the pizza names. Do not use a subquery.
+		select r.ingredient, pizza
+		from recipe r left join items i
+		on r.ingredient = i.ingredient
+		where type = 'fish'
+
+	-- List all ingredients for the Mexican pizza (i.e. country = 'mexico'). You must use a subquery.
+		select distinct ingredient
+		from recipe r
+		where pizza in (
+			select pizza
+			from menu
+			where country = 'mexico'
+		)
+
+	--List all pizzas that cost more than 'stagiony' pizza, also give their prices. Sort the results based on prices in descending order.
+		select pizza, price
+		from menu
+		where price > (
+			select price
+			from menu
+			where pizza = 'stagiony'
+		) order by price desc
+
+	--List ingredients used in more than one pizza. Sort your results in ascending order.
+		select ingredient
+		from recipe
+		group by ingredient
+		having count(ingredient) > 1
+		order by ingredient asc
 }
 
 ----SQL PRACTICE EXAM 3
