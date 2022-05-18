@@ -562,9 +562,6 @@
 		on i.sno = s.sno
 		WHERE mark = 0;
 
-		--SUBQUERY
-		select distinct 
-
 	-- 7. Find the student that has the highest mark for any internship.
 		select distinct(i.sno), s.sname, i.mark, c.subname
 		FROM subject c, enroll i, student s
