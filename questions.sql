@@ -52,6 +52,14 @@
 	--selects students whose first name starts with a,b,c,d or e
 }
 
+-- Use the explation below if you are stuck on what parts of a query to use
+-- SELECT   -> list the columns (and expressions) to be returned from the query​
+-- FROM     -> indicate the table(s) or view(s) from which data will be obtained​
+-- WHERE    -> (Comparison operators, AND, OR, is not null, in/not in, between) indicate the conditions under which a row will be included in the result​
+-- GROUP BY -> (using aggregate functions AVG, MIN, MAX, SUM and COUNT) indicate categorization of results ​
+-- HAVING   -> indicate the conditions under which a category (group) will be included​
+-- ORDER BY -> Sorts the result according to specified criteria
+
 ----BASIC SQL: WEEK 7---
 {
 	--List every subject in alphabetical order
@@ -511,14 +519,6 @@
 		) order by subno, sno
 }
 
--- Use the explation below if you are stuck on what parts of a query to use
--- SELECT   -> list the columns (and expressions) to be returned from the query​
--- FROM     -> indicate the table(s) or view(s) from which data will be obtained​
--- WHERE    -> (Comparison operators, AND, OR, is not null, in/not in, between) indicate the conditions under which a row will be included in the result​
--- GROUP BY -> (using aggregate functions AVG, MIN, MAX, SUM and COUNT) indicate categorization of results ​
--- HAVING   -> indicate the conditions under which a category (group) will be included​
--- ORDER BY -> Sorts the result according to specified criteria
-
 ----HARD QUESTIONS
 {
 	--
@@ -640,7 +640,6 @@
 			SELECT avg(mark)
 			FROM enroll e2
 			WHERE e2.subno = e1.subno);
-
 }
 
 ----SQL PRACTICE EXAM 1
