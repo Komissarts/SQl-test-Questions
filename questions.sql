@@ -479,7 +479,7 @@
 			where u1.materialid = u0.materialid
 		) order by materialid
 
-	--Q2 (L7): List studentno and subjectno in which the student has the highest mark required for this subject. List results in order of subjectno.
+	--Q2 (L7): List sno and subjectno in which the student has the highest mark required for this subject. List results in order of subjectno.
 		select subno, sno
 		from enroll e0
 		where mark = (
@@ -527,75 +527,106 @@
 ----Mock SQL
 {
 	--1. List all the companies that have a quota of more than 7 students in alphabetical order.
-		select companyno, quota
-		from company_t
+		select subno, quota
+		from subject
 		where quota > 7
-		order by companyno asc
+		order by subno asc
 
 	--2. What is the average quota for companies
 		select round(avg(quota), 2) as average_quota
-		from company_t
+		from subject
 
 	--3. List all the students doing internships that are still in progress (i.e. don’t yet have a mark) for companies with ‘tu’ in their name.
-		select s.studentno, s.studentfname, s.studentlname, c.companyname
-		from student_t s inner join internship_t i 
-		on s.studentno=i.studentno inner join company_t c 
-		on i.companyno = c.companyno
+		select s.sno, s.sname, c.subname
+		from student s inner join enroll i 
+		on s.sno=i.sno inner join subject c 
+		on i.subno = c.subno
 		where i.mark is null
-		and companyname LIKE ‘%tu%’
+		and subname LIKE ‘%tu%’
 	
 	--4. List all companies that have a quota divisible by 4 (without remainder).
 		select quota 
-		from company_t
+		from subject
 		where mod(quota, 4) = 0
 
 	--5. List the students that have done more than 3 internships.
-		select studentno, count(studentno) as count
-		from internship_t
-		group by studentno
-		having count(studentno) > 3;
+		select sno, count(sno) as count
+		from enroll
+		group by sno
+		having count(sno) > 3;
 
 	--6. List all the students that have received a mark of 0 for their internships.
 		--CROSS JOINS
-		SELECT distinct i.studentno, s.studentfname, s.studentlname, c.companyname
-		FROM company_t c, internship_t i, student_t s
-		WHERE c.companyno = i.companyno 
-		AND i.studentno = s.studentno
+		SELECT distinct i.sno, s.sname, c.subname
+		FROM subject c, enroll i, student s
+		WHERE c.subno = i.subno 
+		AND i.sno = s.sno
 		AND mark = 0;
 
 		--INNER JOINS
-		SELECT distinct i.studentno, s.studentfname, s.studentlname, c.companyname
-		FROM company_t c INNER JOIN internship_t i 
-		on c.companyno = i.companyno INNER JOIN student_t s 
-		on i.studentno = s.studentno
+		SELECT distinct i.sno, s.sname, c.subname
+		FROM subject c INNER JOIN enroll i 
+		on c.subno = i.subno INNER JOIN student s 
+		on i.sno = s.sno
 		WHERE mark = 0;
 
 	--7. Find the student that has the highest mark for any internship.
-		select distinct(i.studentno), s.studentfname, s.studentlname, i.mark, c.companyname
-		FROM company_t c, internship_t i, student_t s
-		where s.studentno = i.studentno
-		and c.companyno = i.companyno
+		select distinct(i.sno), s.sname, i.mark, c.subname
+		FROM subject c, enroll i, student s
+		where s.sno = i.sno
+		and c.subno = i.subno
 		and i.mark = (
 			select max(mark)
-			from internship_t
+			from enroll
 		);
 
 	-- 8. Which students have never done an internship?
-		select s.studentno, s.studentfname, s.studentlname
-		from student_t s left outer join internship_t i
-		on s.studentno = i.studentno
-		where i.studentno is null;
+		select s.sno, s.sname
+		from student s left outer join enroll i
+		on s.sno = i.sno
+		where i.sno is null;
 
 	-- 9. List the average internship mark (rounded to 2 decimal places) for all students. 
 	-- Make sure to exclude internships that are not yet completed. Order from highest average to lowest average.
-		select s.studentno, round(avg(i.mark), 2) as avg_mark
-		from internship_t i inner join student_t s
-		on s.studentno = i.studentno
+		select i.sno, round(avg(i.mark), 2) as avg_mark
+		from enroll i
 		where i.mark is not null
-		group by s.studentno
+		group by i.sno
 		order by 2 desc;
 
+	-- 10. List the average internship mark (rounded to 2 decimal places) for all companies that have had students 
+	-- successfully complete internships. Order from highest average to lowest average.
+		select subno, round(avg(i.mark), 2) as avg_mark
+		from enroll i
+		where mark is not null
+		group by i.subno
+		order by 2 desc;
+
+	-- 11. Which internships have prerequisites and which companies are they at?
+		select c1.subname, c2.subname as prereq_company
+		from subject c1 inner join subject c2
+		on c1.prerequisiteno = c2.subno
+		where c1.prerequisiteno is not null;
+
+	-- 12. How many companies do not have prerequisites?
+		select count(*) as without_prereqs
+		from subject 
+		where prerequisiteno is null;
+
+	-- 13. Determine which companies are the prerequisites for other companies and the number of companies they are a prerequisite for.
+		select c1.subno, c1.subname, count(c2.prerequisiteno) as num_prereq_for
+		from subject c1, subject c2
+		where c1.subno = c2.prerequisiteno
+		group by c1.subno, c1.subname
+		order by num_prereq_for desc;
+
 	-- List all students that have achieved a mark greater than the average mark for that specific subject.
+		SELECT sno
+		FROM enroll e1
+		WHERE mark > (
+			SELECT avg(mark)
+			FROM enroll e2
+			WHERE e2.subno = e1.subno);
 
 }
 
