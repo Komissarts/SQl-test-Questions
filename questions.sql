@@ -575,6 +575,61 @@
 			from enroll e2
 			where e2.subno = e.subno
 		) order by 1, subno
+		
+	---------------------------------------------------------------------------------------------------------------------------------------------------------
+	----------------------------------------------------------------------EXAM 2-----------------------------------------------------------------------------
+
+	-- List all subject's with quotas of less than 350. Show bith the subjects name and quota
+	-- Sort the results in quota ascending and name descending order
+		SELECT subname, quota FROM Subject 
+		WHERE quota < 350
+		ORDER BY quota asc, subname desc
+		
+	-- For each student, show their student number and their average mark as amark. ONly show marks between student number '9800010' and '9800023'
+	-- List the results in student number order
+		SELECT sno, avg(mark) as amark FROM Enroll
+		WHERE sno BETWEEN '9800010' AND '9800023'
+		GROUP BY sno
+		ORDER BY sno
+		
+	-- Give the lowest mark for each student, by showing their student number and their lowest mark as 'mmark'. Only lsit students who have enrolled for more
+	--than 3 subjects.
+	-- List the results in student number order
+		SELECT sno, min(mark) as mmark FROM Enroll
+		GROUP BY sno
+		HAVING count(subno) > 3
+		ORDER BY sno
+		
+	-- List all the subjects and marks for the student '9800024'. Show the subjects number, subjets name and mark 
+	-- Sort the results by mark and then by subject number
+		SELECT e.subno, subname, mark FROM Enroll e
+		INNER JOIN Subject s ON e.subno = s.subno
+		WHERE sno = '9800024'
+		ORDER BY mark, subno
+		
+	-- List student number and name of students who have an average mark is higher than 75
+	-- List the results in student number order
+		SELECT s.sno, sname FROM Student s
+		INNER JOIN Enroll e ON s.sno = e.sno
+		GROUP BY s.sno
+		HAVING avg(mark) > 75
+		ORDER BY 1
+		
+	-- List all subjects, showing subject number and subject name, that have a quota lower than the quota for subject '31434'.
+	-- List results in descending subject number order
+		SELECT subno, subname FROM Subject
+		WHERE quota < (SELECT quota FROM Subject 
+			       WHERE subno = '31434')
+		ORDER BY 1 desc
+	
+	-- For subjects that have more enrolled students than their prerequisite subject, show their subject number, subject name and quota
+	-- In the order if quota followed by subject number 
+		SELECT s1.subno, s1.subname, s1.quota FROM Subject s1
+		INNER JOIN (SELECT prerequisiteno, sno FROM Subject s2 
+			    INNER JOIN Enroll e ON prerequisiteno = e.subno
+			    GROUP BY prerequisiteno) pre
+		ON s1.prerequisiteno = pre.prerequisiteno
+		-- INCOMPLETE!!!! QAQ ;-;
 }
 
 ----Mock SQL
